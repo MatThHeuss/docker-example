@@ -1,0 +1,34 @@
+version: '3.0'
+
+services:
+  banco_teste:
+    image: mysql:8.0
+    restart: unless-stopped 
+    env_file: config/.env
+
+    volumes: 
+      - mysql_data:/database/mysql
+    ports:
+      - 3306:3306
+    networks: 
+      - mysql-net
+  
+  test-app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    
+    ports: 
+      - 8080:4000
+    volumes: 
+      - .:/usr/app
+    depends_on: 
+      - banco_teste
+  
+networks: 
+  mysql-net:
+    driver:  bridge
+
+volumes:
+    mysql_data:
+    
